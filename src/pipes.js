@@ -1,8 +1,11 @@
 module.exports = class Pipes {
   static download(data) {
     const { videoDetails, formats } = data;
+
     const info = this.details(videoDetails);
-    const availableFormats = formats.map((item) => this.availableFormats(item));
+    const availableFormats = formats
+      .filter((item) => item.hasAudio)
+      .map((item) => this.availableFormats(item));
 
     return {
       info,
