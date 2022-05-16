@@ -31,26 +31,22 @@ module.exports = class Handler {
    * @return {*} path
    */
   static async downloadWithProgress(data) {
-    try {
-      const { url, format } = data;
-      const responseInfo = await ytdl.getInfo(url, { quality: 'highestaudio' });
-      const info = await pipes.getInfo(responseInfo);
-      const path = `${env.ftpDir}/${info.info.title}.${format}`;
-      const file = ytdl(url);
-      file.pipe(fs.createWriteStream(path));
+    const { url, format } = data;
+    const responseInfo = await ytdl.getInfo(url, { quality: 'highestaudio' });
+    const info = await pipes.getInfo(responseInfo);
+    const path = `${env.ftpDir}/${info.info.title}.${format}`;
+    const file = ytdl(url);
+    file.pipe(fs.createWriteStream(path));
 
-      new Promise((resolve, reject) => {
-        return file.on('response', (res) => {
-          res.on('end', () => {
-            resolve();
-          });
+    new Promise((resolve, reject) => {
+      return file.on('response', (res) => {
+        res.on('end', () => {
+          resolve();
         });
       });
+    });
 
-      return pipes.download({ path });
-    } catch {
-      return { err: 'ERROR' };
-    }
+    return pipes.download({ path });
   }
 
   /**
