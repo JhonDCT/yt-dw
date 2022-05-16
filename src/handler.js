@@ -51,14 +51,18 @@ module.exports = class Handler {
     const response = new Promise((resolve, reject) => {
       return file.on('response', (res) => {
         res.on('end', () => {
+          console.log('termino');
           resolve(true);
         });
       });
     });
 
+    console.log(response);
+
     if (response) {
       return pipes.download({ path });
     }
+
     // return pipes.download({ path });
   }
 
