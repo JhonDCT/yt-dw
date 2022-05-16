@@ -48,7 +48,7 @@ module.exports = class Handler {
 
     file.pipe(fs.createWriteStream(path));
 
-    new Promise((resolve, reject) => {
+    const response = new Promise((resolve, reject) => {
       return file.on('response', (res) => {
         res.on('end', () => {
           resolve(true);
@@ -56,8 +56,10 @@ module.exports = class Handler {
       });
     });
 
+    if (response) {
+      return pipes.download({ path });
+    }
     // return pipes.download({ path });
-    return file;
   }
 
   /**
