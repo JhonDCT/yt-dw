@@ -2,7 +2,7 @@ const handler = require('./handler');
 
 module.exports = (app) => {
   app.get('/generate-path-download', async (req, res) => {
-    const response = await handler.downloadWithProgress({
+    const response = await handler.download({
       url: req.query.url,
       format: req.query.format,
     });

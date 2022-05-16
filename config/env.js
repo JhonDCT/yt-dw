@@ -1,8 +1,9 @@
 const dotenv = require('dotenv');
+const path = require('path');
 dotenv.config();
 
 const env = {
-  ftpDir: process.env.FTP_DIR,
+  ftpDir: path.join(__dirname, process.env.FTP_DIR),
   ftp: {
     host: process.env.FTP_HOST,
     user: process.env.FTP_USER,

@@ -14,7 +14,12 @@ module.exports = class Handler {
     const { url, format } = data;
     const responseInfo = await ytdl.getInfo(url, { quality: 'highestaudio' });
     const info = await pipes.getInfo(responseInfo);
-    const path = `${env.ftpDir}/${info.info.title}.${format}`;
+    const nameFile = info.info.title
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\w\-]+/g, '-');
+
+    const path = `${env.ftpDir}/${nameFile}.${format}`;
 
     // Descarga en local
     const file = ytdl(url).pipe(fs.createWriteStream(path));
@@ -34,19 +39,25 @@ module.exports = class Handler {
     const { url, format } = data;
     const responseInfo = await ytdl.getInfo(url, { quality: 'highestaudio' });
     const info = await pipes.getInfo(responseInfo);
-    const path = `${env.ftpDir}/${info.info.title}.${format}`;
+    const nameFile = info.info.title
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\w\-]+/g, '-');
+    const path = `${env.ftpDir}/${nameFile}.${format}`;
     const file = ytdl(url);
+
     file.pipe(fs.createWriteStream(path));
 
     new Promise((resolve, reject) => {
       return file.on('response', (res) => {
         res.on('end', () => {
-          resolve();
+          resolve(true);
         });
       });
     });
 
-    return pipes.download({ path });
+    // return pipes.download({ path });
+    return file;
   }
 
   /**
