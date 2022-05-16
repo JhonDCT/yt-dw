@@ -57,9 +57,7 @@ module.exports = class Handler {
       });
     });
 
-    console.log(response);
-
-    if (response) {
+    if (await response) {
       return pipes.download({ path });
     }
 
