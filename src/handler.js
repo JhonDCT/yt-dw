@@ -59,6 +59,8 @@ module.exports = class Handler {
 
     if (await response) {
       return pipes.download({ path });
+    } else {
+      return null;
     }
 
     // return pipes.download({ path });

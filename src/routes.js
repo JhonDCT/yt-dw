@@ -3,9 +3,15 @@ const fs = require('fs');
 
 module.exports = (app) => {
   app.get('/generate-path-download', async (req, res) => {
+    const { url, format } = req.query;
+
+    if (!url && !format) {
+      return res.status(400).json({ err: 'NOT_FOUND_PARAMETERS' });
+    }
+
     const response = await handler.downloadWithProgress({
-      url: req.query.url,
-      format: req.query.format,
+      url,
+      format,
     });
 
     return res.json(response);
