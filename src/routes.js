@@ -41,12 +41,18 @@ module.exports = (app) => {
   })
 
   app.get('/ftp-download', async (req, res) => {
-    const response = await handler.downloadTest()
+    const path = req.query.path
+    const response = await handler.downloadTest({ path })
 
-    return
+    return res.json(response)
+  })
 
-    // res.attachment(response)
-    // response.pipe(res)
+  app.get('/download-clean', async (req, res) => {
+    const path = req.query.path
+
+    await handler.downloadFinish({ path })
+
+    return res.json({ path })
   })
 
   // app.get('/generate-path-download', async (req, res) => {

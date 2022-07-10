@@ -186,23 +186,31 @@ module.exports = class Handler {
    * @summary Download files
    * @return {*}
    */
-  static async downloadTest() {
+  static async downloadTest(data) {
+    const { path } = data
+
     return new Promise((resolve, reject) => {
-      return FTPClient.get(
-        "Cypress Hill - Lowrider (Official Video).mp3",
-        (err, stream) => {
-          if (err) reject(err)
-          resolve(stream)
+      return FTPClient.get(path, (err, stream) => {
+        if (err) reject(err)
 
-          stream.once('close', () => {
-            FTPClient.end()
-          })
+        stream.once('close', () => {
+          FTPClient.end()
+        })
 
-          // stream.pipe(
-          //   fs.createWriteStream('Cypress Hill - Lowrider (Official Video).mp3')
-          // )
-        }
-      )
+        stream.pipe(fs.createWriteStream(path))
+
+        resolve({ path: env.ftpDir + path })
+      })
     })
+  }
+
+  static async downloadFinish(data) {
+    const { path } = data
+
+    try {
+      fs.rm(path)
+    } catch (e) {
+      console.log(e)
+    }
   }
 }
