@@ -1,8 +1,8 @@
-const pipes = require('./pipes');
-const ytdl = require('ytdl-core');
-const fs = require('fs');
-const env = require('../config/env');
-const FTPClient = require('./ftp');
+const pipes = require('./pipes')
+const ytdl = require('ytdl-core')
+const fs = require('fs')
+const env = require('../config/env')
+const FTPClient = require('./ftp')
 
 module.exports = class Handler {
   /**
@@ -11,23 +11,23 @@ module.exports = class Handler {
    * @return {*} path
    */
   static async download(data) {
-    const { url, format } = data;
-    const responseInfo = await ytdl.getInfo(url, { quality: 'highestaudio' });
-    const info = await pipes.getInfo(responseInfo);
+    const { url, format } = data
+    const responseInfo = await ytdl.getInfo(url, { quality: 'highestaudio' })
+    const info = await pipes.getInfo(responseInfo)
     const nameFile = info.info.title
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^\w\-]+/g, '-');
+      .replace(/[^\w\-]+/g, '-')
 
-    const path = `${env.ftpDir}/${nameFile}.${format}`;
+    const path = `${env.ftpDir}/${nameFile}.${format}`
 
     // Descarga en local
-    const file = ytdl(url).pipe(fs.createWriteStream(path));
+    const file = ytdl(url).pipe(fs.createWriteStream(path))
 
     // Copiar archivo al servidor ftp
     // this.uploadFileToFTP({ path, title: info.info.title, format });
 
-    return pipes.download(file);
+    return pipes.download(file)
   }
 
   /**
@@ -36,31 +36,31 @@ module.exports = class Handler {
    * @return {*} path
    */
   static async downloadWithProgress(data) {
-    const { url, format } = data;
-    const responseInfo = await ytdl.getInfo(url, { quality: 'highestaudio' });
-    const info = await pipes.getInfo(responseInfo);
+    const { url, format } = data
+    const responseInfo = await ytdl.getInfo(url, { quality: 'highestaudio' })
+    const info = await pipes.getInfo(responseInfo)
     const nameFile = info.info.title
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^\w\-]+/g, '-');
-    const path = `${env.ftpDir}/${nameFile}.${format}`;
-    const file = ytdl(url);
+      .replace(/[^\w\-]+/g, '-')
+    const path = `${env.ftpDir}/${nameFile}.${format}`
+    const file = ytdl(url)
 
-    file.pipe(fs.createWriteStream(path));
+    file.pipe(fs.createWriteStream(path))
 
     const response = new Promise((resolve, reject) => {
       return file.on('response', (res) => {
         res.on('end', () => {
-          console.log('termino');
-          resolve(true);
-        });
-      });
-    });
+          console.log('termino')
+          resolve(true)
+        })
+      })
+    })
 
     if (await response) {
-      return pipes.download({ path });
+      return pipes.download({ path })
     } else {
-      return null;
+      return null
     }
 
     // return pipes.download({ path });
@@ -71,13 +71,13 @@ module.exports = class Handler {
    * @param {*} data
    */
   static async uploadFileToFTP(data) {
-    const { path, title, format } = data;
-    const destName = `${title}.${format}`;
+    const { path, title, format } = data
+    const destName = `${title}.${format}`
 
     FTPClient.put(path, destName, (err) => {
-      if (err) throw err;
-      FTPClient.end();
-    });
+      if (err) throw err
+      FTPClient.end()
+    })
   }
 
   // TODO: Decidir que método, funciona mejor v1
@@ -87,21 +87,21 @@ module.exports = class Handler {
    * @return {*} response
    */
   static async getFilesFromDir(data) {
-    let { path } = data;
+    let { path } = data
 
     if (!path) {
       return {
         message: 'FOLDER_EXISTS_NOT_FOUND',
-      };
+      }
     }
 
     if (path) {
-      path = `${env.ftpDir}/${path}`;
+      path = `${env.ftpDir}/${path}`
     }
 
-    const files = this.getFiles(path, []);
+    const files = this.getFiles(path, [])
 
-    return files;
+    return files
   }
 
   // TODO: Decidir que método, funciona mejor v2
@@ -111,27 +111,27 @@ module.exports = class Handler {
    * @return {*} response
    */
   static async readDir(data) {
-    let { path } = data;
+    let { path } = data
 
     if (!path) {
       return {
         message: 'FOLDER_EXISTS_NOT_FOUND',
-      };
+      }
     }
 
     if (path) {
-      path = `${env.ftpDir}/${path}`;
+      path = `${env.ftpDir}/${path}`
     }
 
     const files = fs.readdirSync(path).map((file) => {
       if (fs.statSync(`${path}/${file}`).isDirectory()) {
-        return { directory: true, path: `${path}/${file}` };
+        return { directory: true, path: `${path}/${file}` }
       } else {
-        return { file: true, path: `${path}/${file}` };
+        return { file: true, path: `${path}/${file}` }
       }
-    });
+    })
 
-    return files;
+    return files
   }
 
   /**
@@ -139,9 +139,9 @@ module.exports = class Handler {
    * @param {*} data
    */
   static deleteLocalFile(data) {
-    const { path } = data;
+    const { path } = data
 
-    fs.unlinkSync(path);
+    fs.unlinkSync(path)
   }
 
   /**
@@ -151,19 +151,19 @@ module.exports = class Handler {
    * @return {*} response
    */
   static getFiles(dir, files_) {
-    files_ = files_ || [];
-    const files = fs.readdirSync(dir);
+    files_ = files_ || []
+    const files = fs.readdirSync(dir)
 
     files.forEach((file) => {
-      const name = `${dir}/${file}`;
+      const name = `${dir}/${file}`
       if (fs.statSync(name).isDirectory()) {
-        this.getFiles(name, files_);
+        this.getFiles(name, files_)
       } else {
-        files_.push(name);
+        files_.push(name)
       }
-    });
+    })
 
-    return files_;
+    return files_
   }
 
   /** ========================== DEPRECATED ======================== */
@@ -176,9 +176,33 @@ module.exports = class Handler {
   static async getAllFilesAndFolder() {
     return new Promise((resolve, reject) => {
       return FTPClient.list((err, files) => {
-        if (err) reject(err);
-        return resolve(files);
-      });
-    });
+        if (err) reject(err)
+        return resolve(files)
+      })
+    })
   }
-};
+
+  /**
+   * @summary Download files
+   * @return {*}
+   */
+  static async downloadTest() {
+    return new Promise((resolve, reject) => {
+      return FTPClient.get(
+        "Cypress Hill - Lowrider (Official Video).mp3",
+        (err, stream) => {
+          if (err) reject(err)
+          resolve(stream)
+
+          stream.once('close', () => {
+            FTPClient.end()
+          })
+
+          // stream.pipe(
+          //   fs.createWriteStream('Cypress Hill - Lowrider (Official Video).mp3')
+          // )
+        }
+      )
+    })
+  }
+}
