@@ -30,4 +30,38 @@ module.exports = class Pipes {
       availableFormats,
     };
   }
+
+  /**
+   * @summary Create a pipe for details
+   * @param {*} data
+   * @return {*}
+   */
+  static details(data) {
+    const { embed, title, description, lengthSeconds, thumbnails } = data;
+
+    return {
+      flashUrl: embed.flashUrl,
+      title,
+      description,
+      lengthSeconds,
+      thumbnails,
+    };
+  }
+
+  /**
+   * @summary Create a pipe for availableFormats
+   * @param {*} data
+   * @return {*}
+   */
+  static availableFormats(data) {
+    const { url, mimeType, width, height, quality } = data;
+
+    return {
+      url,
+      mimeType,
+      width,
+      height,
+      quality,
+    };
+  }
 };
