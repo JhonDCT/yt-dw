@@ -37,6 +37,11 @@ module.exports = class Handler {
    */
   static async downloadWithProgress(data) {
     const { url, format } = data
+
+    if (!url && !format) {
+      return { err: 'NOT_FOUND_PARAMETERS' }
+    }
+
     const responseInfo = await ytdl.getInfo(url, { quality: 'highestaudio' })
     const info = await pipes.getInfo(responseInfo)
     const nameFile = info.info.title
@@ -70,147 +75,30 @@ module.exports = class Handler {
    * @summary Upload file to FTP server
    * @param {*} data
    */
-  static async uploadFileToFTP(data) {
-    const { path, title, format } = data
-    const destName = `${title}.${format}`
-
-    FTPClient.put(path, destName, (err) => {
-      if (err) throw err
-      FTPClient.end()
-    })
-  }
-
-  // TODO: Decidir que método, funciona mejor v1
-  /**
-   * @summary Get all files from directory
-   * @param {*} data
-   * @return {*} response
-   */
-  static async getFilesFromDir(data) {
-    let { path } = data
+  static async uploadFile(data) {
+    const { path } = data
 
     if (!path) {
-      return {
-        message: 'FOLDER_EXISTS_NOT_FOUND',
-      }
+      return { error: 'PATH_NOT_FOUND' }
     }
 
-    if (path) {
-      path = `${env.ftpDir}/${path}`
-    }
+    await FTPClient.connect()
+    await FTPClient.uploadFrom(path, path)
 
-    const files = this.getFiles(path, [])
-
-    return files
+    FTPClient.close()
   }
 
-  // TODO: Decidir que método, funciona mejor v2
-  /**
-   * @summary Read a directory
-   * @param {*} data
-   * @return {*} response
-   */
-  static async readDir(data) {
-    let { path } = data
+  static async getAllFiles(data) {
+    const { path } = data
 
     if (!path) {
-      return {
-        message: 'FOLDER_EXISTS_NOT_FOUND',
-      }
+      return { error: 'PATH_NOT_FOUND' }
     }
 
-    if (path) {
-      path = `${env.ftpDir}/${path}`
-    }
+    await FTPClient.connect()
+    const response = await FTPClient.list(path)
+    FTPClient.close()
 
-    const files = fs.readdirSync(path).map((file) => {
-      if (fs.statSync(`${path}/${file}`).isDirectory()) {
-        return { directory: true, path: `${path}/${file}` }
-      } else {
-        return { file: true, path: `${path}/${file}` }
-      }
-    })
-
-    return files
-  }
-
-  /**
-   * @summary Delete a local file
-   * @param {*} data
-   */
-  static deleteLocalFile(data) {
-    const { path } = data
-
-    fs.unlinkSync(path)
-  }
-
-  /**
-   * @summary Get all files from any directory and subdirectory
-   * @param {*} dir
-   * @param {*} files_
-   * @return {*} response
-   */
-  static getFiles(dir, files_) {
-    files_ = files_ || []
-    const files = fs.readdirSync(dir)
-
-    files.forEach((file) => {
-      const name = `${dir}/${file}`
-      if (fs.statSync(name).isDirectory()) {
-        this.getFiles(name, files_)
-      } else {
-        files_.push(name)
-      }
-    })
-
-    return files_
-  }
-
-  /** ========================== DEPRECATED ======================== */
-
-  /**
-   * @summary Get list from initial directory
-   * @return {*}
-   * @deprecated
-   */
-  static async getAllFilesAndFolder() {
-    return new Promise((resolve, reject) => {
-      return FTPClient.list((err, files) => {
-        if (err) reject(err)
-        return resolve(files)
-      })
-    })
-  }
-
-  /**
-   * @summary Download files
-   * @return {*}
-   */
-  static async downloadTest(data) {
-    const { path } = data
-
-    return new Promise((resolve, reject) => {
-      return FTPClient.get(path, (err, stream) => {
-        if (err) reject(err)
-
-        stream.once('close', () => {
-          FTPClient.end()
-        })
-
-        stream.pipe(fs.createWriteStream(path))
-
-        resolve({ path: env.ftpDir + path })
-      })
-    })
-  }
-
-  static async downloadFinish(data) {
-    const { path } = data
-
-    try {
-      fs.rm(path)
-    } catch (e) {
-      console.log(e)
-    }
+    return response
   }
 }
