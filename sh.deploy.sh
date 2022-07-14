@@ -12,6 +12,7 @@ echo $branch_name
 git switch $branch_name
 git pull $branch_name
 
+sudo docker stop $(sudo docker ps | grep yt-downloader | awk '{print $1}' | head -1)
 sudo docker rm $(sudo docker ps -a | grep yt-downloader | awk '{print $1}' | head -1)
 sudo docker rmi yt-downloader
 
