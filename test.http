@@ -1,8 +1,0 @@
-GET http://localhost:3000/get-files HTTP/1.1
-
-### 
-GET http://localhost:3000/read-dir?path=. HTTP/1.1
-
-
-### 
-GET http://localhost:3000/ftp-download?path=Cypress Hill - Lowrider (Official Video).mp3 HTTP/1.1

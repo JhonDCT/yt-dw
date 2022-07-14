@@ -37,4 +37,10 @@ module.exports = (app) => {
 
     return res.json(response)
   })
+
+  app.get('/download-ftp', async (req, res) => {
+    await handler.downloadFile()
+
+    return res.json({})
+  })
 }

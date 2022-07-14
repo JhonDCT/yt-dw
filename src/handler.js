@@ -88,6 +88,13 @@ module.exports = class Handler {
     FTPClient.close()
   }
 
+  static async downloadFile(data) {
+    await FTPClient.connect()
+    await FTPClient.downloadTo('foo.remote-copy.txt', 'foo.remote-copy.txt')
+
+    FTPClient.close()
+  }
+
   static async getAllFiles(data) {
     const { path } = data
 
