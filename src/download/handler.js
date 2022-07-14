@@ -1,8 +1,8 @@
 const pipes = require('./pipes')
 const ytdl = require('ytdl-core')
 const fs = require('fs')
-const env = require('../config/env')
-const FTPClient = require('./ftp')
+const env = require('../../config/env')
+const FTPClient = require('../core/ftp')
 
 module.exports = class Handler {
   /**

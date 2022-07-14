@@ -1,4 +1,4 @@
-const env = require('../../config/env')
+const env = require('../../../config/env')
 const ftp = require('basic-ftp')
 const FTPClient = new ftp.Client()
 

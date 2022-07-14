@@ -1,4 +1,4 @@
-const handler = require('./handler')
+const handler = require('./download/handler')
 const fs = require('fs')
 
 module.exports = (app) => {
