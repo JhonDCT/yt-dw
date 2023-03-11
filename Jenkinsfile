@@ -3,7 +3,9 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker'
+                script {
+                    sh 'docker build -t yt-download .'
+                }
             }
         }
     }    
