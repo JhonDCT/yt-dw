@@ -1,6 +1,13 @@
 pipeline {
     agent any
     stages {
+        stage('Docker Login'){
+            steps {
+                script {
+                    sh 'docker login -u deynercatacora -p Xanandra123'
+                }
+            }
+        }
         stage('Build') {
             steps {
                 script {
