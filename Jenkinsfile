@@ -1,5 +1,4 @@
 pipeline {
-    def app
     agent {
            dockerfile true
     }
@@ -10,9 +9,7 @@ pipeline {
             }
         }
         stage('Build') {
-            app = docker.build()
-        }
-        stage('Test') {
+            def app = docker.build()
             app.inside {
                 sh 'ls -la'
             }
