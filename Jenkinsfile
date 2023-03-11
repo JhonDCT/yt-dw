@@ -1,11 +1,9 @@
-pipeline {
-    agent { dockerfile true }
-    stages {
-        stage('Deploy') {
-            steps {
-                sh 'node --version'
-                sh 'docker build . -t yt-downloader'
-            }
-        }
+node {
+    checkout scm 
+
+    def customImage = docker.build("yt-downloader")
+
+    customImage.inside {
+        sh 'ls -la'
     }
 }
