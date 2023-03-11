@@ -6,8 +6,10 @@ pipeline {
     }
     stages {
         stage('Clean') {
-            sh 'rm -rf node_modules'
-            sh 'rm package-lock.json'
+            steps {
+                sh 'rm -rf node_modules'
+                sh 'rm package-lock.json'
+            }
         }
         stage('Build') {
             steps {
