@@ -1,10 +1,10 @@
-node {
-    checkout scm 
-
-    def customImage = docker.build("yt-downloader")
-
-    customImage.inside {
-        sh 'pwd'
-        sh 'ls -la'
+pipeline {
+    agent { dockerfile true }
+    stages {
+        stage('Deploy') {
+            steps {
+                sh 'sh.deploy.sh'
+            }
+        }
     }
 }
