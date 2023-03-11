@@ -4,9 +4,14 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh ''
-                    sh 'ls -la'
                     sh 'docker build -t yt-download .'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    sh 'docker run -p 3000:3000 -d yt-downloader'
                 }
             }
         }
