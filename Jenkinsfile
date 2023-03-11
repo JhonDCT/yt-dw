@@ -1,10 +1,10 @@
 pipeline {
     agent { dockerfile true }
     stages {
-        stage('Test') {
+        stage('Deploy') {
             steps {
                 sh 'node --version'
-                sh 'ls -la'
+                sh 'docker build . -t yt-downloader'
             }
         }
     }
