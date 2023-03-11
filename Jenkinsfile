@@ -1,21 +1,14 @@
 pipeline {
     agent {
-        docker { image 'node:16-alpine' }
+        docker { 
+            image 'node:16-alpine'
+            args '-p 3000:3000'
+        }
     }
     stages {
-        stage('Pre-clean') {
-            steps {
-                sh 'rm -rf ./node_modules'
-            }
-        }
-        stage('Install dependencies') {
+        stage('Build') {
             steps {
                 sh 'npm install'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                sh 'node ./src/index.js'
             }
         }
     }
