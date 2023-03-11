@@ -9,7 +9,7 @@ pipeline {
             }
         }
         stage('Build') {
-            script {
+            steps {
                 def app = docker.build()
                 app.inside {
                     sh 'ls -la'
