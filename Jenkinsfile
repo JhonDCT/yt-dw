@@ -5,7 +5,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'ls -la'
+                sh 'docker build . -t yt-downloader'
+                sh 'docker run -p 3000:3000 -d yt-downloader'
             }
         }
     }
