@@ -9,11 +9,15 @@ pipeline {
             }
         }
         stage('Build') {
-            app = docker.build()
+            scripts {
+                app = docker.build()
+            }
         }
         stage('Test') {
-            app.inside {
+            scripts {
+                app.inside {
                 sh 'ls -la'
+                }
             }
         }
     }
